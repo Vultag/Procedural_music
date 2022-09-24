@@ -22,8 +22,52 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
     
     public SfizzPlayer Player;
 
+    // respectivement : Piano, ... // a remplir
+    public enum EInstrument
+    {
+        eSaxophone,
+        ePiano
+    }
+    public static class Instruments {
 
-    public int BPM;
+       public static int GetNumber()
+        {
+            return System.Enum.GetValues(typeof(EInstrument)).Length; 
+        }
+
+        public static string GetInstrumentPath(EInstrument instrument)
+        {
+            switch (instrument)
+            {
+                string instrumentDir;
+                string instrumentName;
+                case ePiano:
+                    instrumentDir = "Piano";
+                    instrumentName = "SalamanderGrandPianoV3Retuned.sfz";
+                    break;
+                case eSaxophone:
+                    instrumentDir = "Saxophone";
+                    instrumentName = "TenorSaxophone-20200717.sfz";
+                    break;
+                default:
+                    Debug.LogWarning("instrument non trouve");
+                    return null;
+                instrumentPath = Path.GetFullPath(
+                    Path.Combine(
+                        Application.streamingAssetsPath,
+                        "Instruments", instrumentDir, instrumentName
+                    )
+                );
+                return instrumentPath;
+            }
+        }
+    }
+
+
+    [SerializeField] private EInstrument instrument;
+
+
+    private int BPM;
     private float time_multiplicator;
     //private float max_time_frame = 0.25f; //division max possible des temps
     private float[] temps_division = { 0.25f, 0.5f, 0.75f, 1f };
@@ -69,6 +113,7 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
 
     //respectivement  - ronde, blanche, noire, croche, doublecroche
     List<float> rhythm_prob = new List<float> { 2, 5, 23, 40, 30};
+    List<float> chord_rhythm_prob = new List<float> { 20, 20, 54, 5, 1};
 
     private string[] string_modes = { "Ionien", "Dorien", "Phrygien", "Lydien", "Mixolydien", "Eolien", "Locrien" };
     private int[][] modes;
@@ -89,29 +134,20 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
     void Start()
     {
 
+        BPM = this.transform.parent.GetComponent<TimeControllerScript>().BPM;
+
         latest_rhythm = 0; // A RENPLACER PAR LE RYTM DE DEBUT POUR LA MUSIQUE
 
         time_multiplicator = ((float)60 / BPM);
 
-        
-        
-        string instrumentPath = Path.GetFullPath(
-            Path.Combine(
-                Application.streamingAssetsPath,
-                "Instruments", "Piano", "SalamanderGrandPianoV3Retuned.sfz"
-            )
-        );
+        Debug.Log(instrument);
+        instrumentPath = Instruments.GetInstrumentPath(instrument);
 
         bool success = Player.Sfizz.LoadFile(instrumentPath);
         if (!success)
         {
             Debug.LogWarning($"Sfz not found at the given path: {instrumentPath}, player will remain silent.");
         }
-        
-        
-
-
-
 
         modes = new int[][] { Ionien, Dorien, Phrygien, Lydien, Mixolydien, Eolien, Locrien };
 
@@ -126,10 +162,14 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
             StartCoroutine("TEMPO");
 
         //StartCoroutine("free_play");
-        StartCoroutine(accompaniement());
+        //StartCoroutine(accompagnement());
 
         
     }
+
+
+
+
 
     // Update is called once per frame
     void Update()
@@ -140,6 +180,7 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
        // Random.Range(-6, 7);
 
     }
+
 
     IEnumerator TEMPO()
     {
@@ -155,9 +196,10 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
 
     
 
-    IEnumerator free_play() //renomer Time_line?
+    IEnumerator free_play()
     {
-        while (true)
+        float temps_left = 4;
+        while (temps_left>0) //tourne pendant une mesure
         {
 
             time_multiplicator = ((float)60 / BPM); //permet de changer dynamiquement dans l editor a enlever
@@ -179,15 +221,17 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
             //yield return new WaitForSeconds(2f);
             yield return new WaitForSeconds(current_rhythm*time_multiplicator);
 
+            temps_left -= current_rhythm*time_multiplicator;
 
             yield return null;
         }
     }
 
 
-    IEnumerator accompaniement()
+    IEnumerator accompagnement()
     {
-        while (true)
+        float temps_left = 4;
+        while (temps_left > 0) //tourne pendant une mesure
         {
 
             time_multiplicator = ((float)60 / BPM); //permet de changer dynamiquement dans l editor a enlever
@@ -198,17 +242,18 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
             //Player.Sfizz.SendNoteOff(0, note, 120);
 
             //chaine de markov ici ?
-            //current_rhythm = rhythm_type[GetItemByProbability(rhythm_prob)];
+            current_rhythm = rhythm_type[GetItemByProbability(chord_rhythm_prob)];
 
             //print("play");
             StartCoroutine(Play_chord());
 
 
-            //latest_rhythm = current_rhythm;
+            latest_rhythm = current_rhythm;
 
-            yield return new WaitForSeconds(1f);
-            //yield return new WaitForSeconds(current_rhythm*time_multiplicator);
+            //yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(current_rhythm*time_multiplicator);
 
+            temps_left -= current_rhythm * time_multiplicator;
 
             yield return null;
         }

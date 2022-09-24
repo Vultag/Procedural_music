@@ -6,14 +6,13 @@ public class TimeControllerScript : MonoBehaviour
 {
 
     private float time;
-    public int BPM;
+    public int BPM; // pas possibiliter de changer le temps dynamique temps , ajouter ChangeBPM() ?
 
     private int temps;
     private float tempo;
     private int mesure;
 
     private int instrument_number;
-    
 
 
     // Start is called before the first frame update
@@ -35,10 +34,31 @@ public class TimeControllerScript : MonoBehaviour
             temps++;
         }
 
-        if(temps - mesure*3>mesure*3+3) // mesure a 4 temps
+        if(temps - mesure*3>mesure*3) // mesure a 4 temps
         {
-            mesure++; //rest les temps a 0 ?
+
+
+            //respectivement : 0 = accompagnement ; 1 = free_play
+            int play_styles_available = 1; // augmenter quand je rajoute des playstyle
+
+            print("nouvelle mesure");
             //indiquer aux instru de jouer pendant 1 mesure
+            for(int i = 0; i < this.transform.childCount; i++)
+            {
+                
+                if (play_styles_available == 1)
+                {
+                    this.transform.GetChild(i).gameObject.GetComponent<MusicControllerScript>().StartCoroutine("free_play");
+                    play_styles_available--;
+                }
+                else if(play_styles_available == 0)
+                {
+                    this.transform.GetChild(i).gameObject.GetComponent<MusicControllerScript>().StartCoroutine("accompagnement");
+                }
+            }
+
+
+            mesure++; //rest les temps a 0 ?
         }
 
     }
