@@ -93,15 +93,14 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
 
         time_multiplicator = ((float)60 / BPM);
 
-        /*
+        
         
         string instrumentPath = Path.GetFullPath(
             Path.Combine(
                 Application.streamingAssetsPath,
-                "Instruments", "Marimba", "SalamanderGrandPianoV3Retuned.sfz"
+                "Instruments", "Piano", "SalamanderGrandPianoV3Retuned.sfz"
             )
         );
-        string path = Path.Combine(Application.streamingAssetsPath, "Instruments", "Piano", "SalamanderGrandPianoV3Retuned.sfz");
 
         bool success = Player.Sfizz.LoadFile(instrumentPath);
         if (!success)
@@ -109,7 +108,7 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
             Debug.LogWarning($"Sfz not found at the given path: {instrumentPath}, player will remain silent.");
         }
         
-        */
+        
 
 
 
