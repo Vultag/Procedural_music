@@ -1,16 +1,13 @@
+using F1yingBanana.SfizzUnity;
+using Melanchall.DryWetMidi.MusicTheory;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq; //juste pour check des notes -> a retirer
-
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
-
-using F1yingBanana.SfizzUnity;
-using Melanchall.DryWetMidi.MusicTheory;
+using System.Linq; //juste pour check des notes -> a retirer
 
 public class MusicControllerScript : MonoBehaviour //renomer instrument_controller ?
 {
@@ -25,10 +22,11 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
     
     public SfizzPlayer Player;
 
+
     [SerializeField] private EInstrument instrument;
 
 
-    private TimeControllerScript timeController;
+    private int BPM;
     private float time_multiplicator;
     //private float max_time_frame = 0.25f; //division max possible des temps
     private float[] temps_division = { 0.25f, 0.5f, 0.75f, 1f };
@@ -94,12 +92,12 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
     // Start is called before the first frame update
     void Start()
     {
-        timeController = this.transform.parent.GetComponent<TimeControllerScript>();
-        Assert.IsNotNull(timeController);
+
+        BPM = this.transform.parent.GetComponent<TimeControllerScript>().BPM;
 
         latest_rhythm = 0; // A RENPLACER PAR LE RYTM DE DEBUT POUR LA MUSIQUE
 
-        time_multiplicator = ((float)60 / timeController.beatsPerMinute);
+        time_multiplicator = ((float)60 / BPM);
 
         Debug.Log(instrument);
         string instrumentPath = Instruments.GetInstrumentPath(instrument);
@@ -147,7 +145,7 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
     {
         while (true)
         { 
-            yield return new WaitForSeconds(60f / timeController.beatsPerMinute);
+            yield return new WaitForSeconds(60f / BPM);
 
             Player.Sfizz.SendNoteOn(0, 50, 120);
 
@@ -163,10 +161,10 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
         while (temps_left>0) //tourne pendant une mesure
         {
 
-            time_multiplicator = ((float)60 / timeController.beatsPerMinute); //permet de changer dynamiquement dans l editor a enlever
+            time_multiplicator = ((float)60 / BPM); //permet de changer dynamiquement dans l editor a enlever
 
             //division du temps sur la plus petite unite
-            //yield return new WaitForSeconds((60f / timeController.BPM) * temps_division[0]);
+            //yield return new WaitForSeconds((60f / BPM) * temps_division[0]);
 
             //Player.Sfizz.SendNoteOff(0, note, 120);
 
@@ -195,10 +193,10 @@ public class MusicControllerScript : MonoBehaviour //renomer instrument_controll
         while (temps_left > 0) //tourne pendant une mesure
         {
 
-            time_multiplicator = ((float)60 / timeController.beatsPerMinute); //permet de changer dynamiquement dans l editor a enlever
+            time_multiplicator = ((float)60 / BPM); //permet de changer dynamiquement dans l editor a enlever
 
             //division du temps sur la plus petite unite
-            //yield return new WaitForSeconds((60f / timeController.BPM) * temps_division[0]);
+            //yield return new WaitForSeconds((60f / BPM) * temps_division[0]);
 
             //Player.Sfizz.SendNoteOff(0, note, 120);
 
