@@ -85,9 +85,9 @@ public class Music_controller_script : MonoBehaviour
     List<float> cumulativeProbability;
 
 
-        // Start is called before the first frame update
-        void Start()
-        {
+    // Start is called before the first frame update
+    void Start()
+    {
 
         latest_rhythm = 0; // A RENPLACER PAR LE RYTM DE DEBUT POUR LA MUSIQUE
 
@@ -95,15 +95,18 @@ public class Music_controller_script : MonoBehaviour
 
 
         
-        
+        string instrumentPath = Path.GetFullPath(
+            Path.Combine(
+                Application.streamingAssetsPath,
+                "Instruments", "Marimba", "SalamanderGrandPianoV3Retuned.sfz"
+            )
+        );
         string path = Path.Combine(Application.streamingAssetsPath, "Instruments", "Piano", "SalamanderGrandPianoV3Retuned.sfz");
 
-        Player.Sfizz.LoadFile(path);
-
-        
-        if (!Player.Sfizz.LoadFile(path))
+        bool success = Player.Sfizz.LoadFile(instrumentPath);
+        if (!success)
         {
-            Debug.LogWarning($"Sfz not found at the given path: {path}, player will remain silent.");
+            Debug.LogWarning($"Sfz not found at the given path: {instrumentPath}, player will remain silent.");
         }
         
         
