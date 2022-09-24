@@ -9,7 +9,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using System.Linq; //juste pour check des notes -> a retirer
 
-public class Music_controller_script : MonoBehaviour
+public class MusicControllerScript : MonoBehaviour //renomer instrument_controller ?
 {
     
     /*
@@ -52,7 +52,7 @@ public class Music_controller_script : MonoBehaviour
     private int _si = 71;
     */
 
-    private int[] supposed_note = { 24,26,27,29,31,33,35,36,38,40,41,43,44,46,48,50,51,53,55,56,58,60, 62, 63, 65, 67, 68, 70, 72, 74, 75, 77, 79, 80, 82, 84, 86, 87, 89, 91, 92, 94 ,96 };
+    //private int[] supposed_note = { 24,26,27,29,31,33,35,36,38,40,41,43,44,46,48,50,51,53,55,56,58,60, 62, 63, 65, 67, 68, 70, 72, 74, 75, 77, 79, 80, 82, 84, 86, 87, 89, 91, 92, 94 ,96 };
 
     private int[] Ionien = { 2, 2, 1, 2, 2, 2, 1 };
     private int[] Dorien = { 2, 1, 2, 2, 2, 1, 2 };
@@ -93,7 +93,7 @@ public class Music_controller_script : MonoBehaviour
 
         time_multiplicator = ((float)60 / BPM);
 
-
+        /*
         
         string instrumentPath = Path.GetFullPath(
             Path.Combine(
@@ -109,7 +109,7 @@ public class Music_controller_script : MonoBehaviour
             Debug.LogWarning($"Sfz not found at the given path: {instrumentPath}, player will remain silent.");
         }
         
-        
+        */
 
 
 
